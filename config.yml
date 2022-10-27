@@ -1,0 +1,17 @@
+dynamic-simulation-default-parameters:
+  startTime: 1
+  stopTime: 100
+
+dynawaltz:
+  homeDir: YOUR_DYNAWO_PATH # root directory of dynawo installation
+  debug: false
+
+dynawaltz-default-parameters:
+  # All the pathes can be relative to the root directory
+  parametersFile: models.par
+  network.parametersFile: network.par
+  network.parametersId: "1"
+  solver.type: IDA
+  solver.parametersFile: solver.par
+  solver.parametersId: "1"
+
