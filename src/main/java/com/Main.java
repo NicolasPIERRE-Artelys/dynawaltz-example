@@ -5,7 +5,9 @@ import com.powsybl.config.classic.ClassicPlatformConfigProvider;
 import com.powsybl.dynamicsimulation.DynamicModelsSupplier;
 import com.powsybl.dynamicsimulation.DynamicSimulation;
 import com.powsybl.dynamicsimulation.DynamicSimulationResult;
+import com.powsybl.dynamicsimulation.EventModelsSupplier;
 import com.powsybl.dynawaltz.dynamicmodels.LoadAlphaBeta;
+import com.powsybl.dynawaltz.events.EventQuadripoleDisconnection;
 import com.powsybl.iidm.import_.Importers;
 import com.powsybl.iidm.network.Network;
 
@@ -20,13 +22,17 @@ public class Main {
         loadConfig(CONFIG_PATH);
         Network net = loadNetwork();
         DynamicModelsSupplier supplier = getMockModelSupplier();
-        DynamicSimulationResult results = DynamicSimulation.run(net, supplier);
+        DynamicSimulation.Runner dynawoSimulation = DynamicSimulation.find();
+        DynamicSimulationResult results = dynawoSimulation.run(net, supplier, getMockEventSupplier());
         results.getTimeLine().stream().forEach(str -> System.out.println(str.getValue()));
         System.out.println(results.isOk());
     }
 
     private static DynamicModelsSupplier getMockModelSupplier() {
         return network -> Collections.singletonList(new LoadAlphaBeta("BBM_" + network.getLoadStream().findFirst().get().getId(), network.getLoadStream().findFirst().get().getId(), "LAB"));
+    }
+    private static EventModelsSupplier getMockEventSupplier() {
+        return network -> Collections.singletonList(new EventQuadripoleDisconnection("evtId", network.getGeneratorStream().findFirst().get().getId(), "EQD"));
     }
 
     private static Network loadNetwork() {
