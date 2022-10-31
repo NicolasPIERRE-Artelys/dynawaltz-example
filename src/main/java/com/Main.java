@@ -21,9 +21,8 @@ public class Main {
     public static void main(String[] args) {
         loadConfig(CONFIG_PATH);
         Network net = loadNetwork();
-        DynamicModelsSupplier supplier = getMockModelSupplier();
         DynamicSimulation.Runner dynawoSimulation = DynamicSimulation.find();
-        DynamicSimulationResult results = dynawoSimulation.run(net, supplier, getMockEventSupplier());
+        DynamicSimulationResult results = dynawoSimulation.run(net, emptyModelSupplier(), emptyEventSupplier());
         results.getTimeLine().stream().forEach(str -> System.out.println(str.getValue()));
         System.out.println(results.isOk());
     }
@@ -33,6 +32,12 @@ public class Main {
     }
     private static EventModelsSupplier getMockEventSupplier() {
         return network -> Collections.singletonList(new EventQuadripoleDisconnection("evtId", network.getGeneratorStream().findFirst().get().getId(), "EQD"));
+    }
+    private static DynamicModelsSupplier emptyModelSupplier() {
+        return network -> new LinkedList<>();
+    }
+    private static EventModelsSupplier emptyEventSupplier() {
+        return network -> new LinkedList<>();
     }
 
     private static Network loadNetwork() {
